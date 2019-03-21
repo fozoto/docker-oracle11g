@@ -37,7 +37,7 @@ Image was created in the following way:
 ```
 $ sudo docker build -t gcusnieux/oracle11g .
    
-$ sudo docker run -d -p 0.0.0.0:2222:22 -v /$path/docker-oracle11g:/shared -e ROOT_PASS="mySshPassword" -t gcusnieux/oracle
+$ sudo docker run -d -p 0.0.0.0:2222:22 -p 0.0.0.0:1521:1521 -p 0.0.0.0:1158:1158 -v /file/docker-oracle11g:/shared -v /file/database:/opt -e ROOT_PASS="mySshPassword" -t gcusnieux/oracle11g
 
 ```
 
@@ -121,3 +121,27 @@ Test connection.
 [oracle@localhost ~]$ sqlplus system/oracle@localhost:1521/orcl
 
 ```
+
+bug fixed: cannot su - oracle
+could not open session
+
+```
+[root@f399020e1c7c ~]# vi /etc/pam.d/su
+
+#commented this line:
+#session                include         system-auth
+```
+
+if your hostname had changed, modify the `HOSTNAME` in
+```
+vi /opt/oracle/product/11.2.0/dbhome_1/network/admin/listener.ora
+```
+
+docker run image
+```
+sudo docker run -d -p 0.0.0.0:2222:22 -p 0.0.0.0:1521:1521 -p 0.0.0.0:1158:1158 -v /file/database:/opt -t gcusnieux/oracle11g
+```
+
+after that start docker container ID
+
+Enjoy it!
